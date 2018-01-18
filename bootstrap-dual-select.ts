@@ -3,7 +3,14 @@
 
         itemList: Array<ListItem> = new Array<ListItem>();
         id: string;
-        search: boolean = true
+        search: boolean = true;
+        classList: ClassObject = {
+            ul: "list-group",
+            li: "list-group-item",
+            clicked: "active",
+            selectBtn: "fa-chevron-left",
+            unselectBtn: "fa-chevron-right",
+        };
 
         constructor(data: InitObject) {
             this.LoadList(data);
@@ -28,6 +35,9 @@
             } else {
                 this.id = options.id;
                 this.search = options.search || true;
+            }
+            if (options.classList) {
+                this.classList = options.classList;
             }
         }
         SelectItems = () => {
@@ -62,9 +72,9 @@
             let unselectedList: HTMLUListElement = document.createElement("ul");
             let leftCol: HTMLDivElement = document.createElement("div");
             let rightCol: HTMLDivElement = document.createElement("div");
-            let middleCol: HTMLDivElement = document.createElement("div");
 
-            middleCol.classList.add("col-2");
+            
+
             leftCol.classList.add("col-5");
             rightCol.classList.add("col-5");
             container.classList.add("row");
@@ -78,8 +88,28 @@
             leftCol.appendChild(unselectedList);
             rightCol.appendChild(selectedList);
             container.appendChild(leftCol);
-            container.appendChild(middleCol);
+            container.appendChild(this.BuildToolbar());
             container.appendChild(rightCol);
+        }
+        BuildToolbar = (): HTMLDivElement => {
+            let toolbar: HTMLDivElement = document.createElement("div");
+            let buttonList: HTMLUListElement = document.createElement("ul");
+            toolbar.classList.add("col-2");
+            buttonList.classList.add("list-group");
+
+            this.toolbarIconClasses.forEach((value, index, arr) => {
+                let item: HTMLLIElement = document.createElement("li");
+                let icon: HTMLSpanElement = document.createElement("span");
+                icon.classList.add("fa");
+                icon.classList.add(value);
+                item.classList.add("list-group-item");
+
+                item.appendChild(icon);
+                buttonList.appendChild(item);
+            });
+            toolbar.appendChild(buttonList);
+
+            return toolbar;
         }
     }
 
@@ -101,11 +131,20 @@
         data: Array<UserItem>;
         id: string;
         search?: boolean;
+        classList?: ClassObject;
     }
     interface UserItem {
         name: string;
         category?: string;
     }
+    interface ClassObject {
+        ul: string;
+        li: string;
+        selectBtn: string;
+        unselectBtn: string;
+        clicked: string;
+    }
+
     let data: Array<UserItem> = [
         {
             name: "one",
